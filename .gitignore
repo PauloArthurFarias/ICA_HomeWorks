@@ -1,0 +1,36 @@
+# Arquivos de Ambiente Virtual
+# Impede que você envie as bibliotecas instaladas para o repositório.
+# O correto é enviar apenas a lista de dependências (ex: requirements.txt).
+.venv/
+venv/
+env/
+
+# Caches e arquivos compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos de configuração de IDEs e editores de código
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos de checkpoint do Jupyter Notebook
+.ipynb_checkpoints/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de build e distribuição do Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Pasta de dados (Opcional)
+# Descomente a linha abaixo se seus arquivos .csv forem muito grandes
+# e você não quiser versioná-los no Git.
+# data/
