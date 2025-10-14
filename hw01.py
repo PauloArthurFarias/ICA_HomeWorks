@@ -28,9 +28,9 @@ print(assimetria)
 variaveis_preditoras_red = red_database.drop('quality', axis=1)
 variaveis_preditoras_white = white_database.drop('quality', axis=1)
 
-pasta_graficos = 'graficos'
+pasta_graficos = 'graficos_task2'
 if not os.path.exists(pasta_graficos):
-    print("Criando pasta 'graficos' para salvar os gráficos.")
+    print("Criando pasta para salvar os gráficos.")
     os.makedirs(pasta_graficos)
 
     for coluna in variaveis_preditoras_red.columns:
@@ -71,4 +71,59 @@ if not os.path.exists(pasta_graficos):
         plt.savefig(nome_arquivo)
         plt.close()
 else:
-    print("A pasta 'graficos' já existe. Os gráficos não serão recriados.")
+    print("A pasta já existe. Os gráficos não serão recriados.")
+
+#TASK 03
+# Agrupando por 'quality' e calculando a média, desvio padrão e assimetria para cada grupo
+media_condicional = red_database.groupby('quality').mean()
+desvio_condicional = red_database.groupby('quality').std()
+assimetria_condicional = red_database.groupby('quality').skew()
+
+estatisticas_condicionais = red_database.groupby('quality').agg(['mean', 'std', 'skew'])
+print("\n--- Tabela Completa de Estatísticas Condicionais ---")
+print(estatisticas_condicionais)
+
+pasta_graficos = 'graficos_task3'
+if not os.path.exists(pasta_graficos):
+    print("Criando pasta para salvar os gráficos.")
+    os.makedirs(pasta_graficos)
+
+    for coluna in variaveis_preditoras_red.columns:
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(data=red_database, x='quality', y=coluna)
+        plt.title(f'Distribuição de "{coluna}" por Classe de Qualidade')
+        plt.xlabel('Qualidade do Vinho')
+        plt.ylabel(coluna)
+        nome_arquivo = os.path.join(pasta_graficos, f'red_boxplot_quality_{coluna}.png')
+        plt.savefig(nome_arquivo)
+        plt.close()
+
+    for coluna in variaveis_preditoras_red.columns:
+        plt.figure(figsize=(12, 7))
+        sns.histplot(data=red_database, x=coluna, hue='quality', multiple="layer", kde=True, palette='viridis')    # 'multiple="layer"' sobrepõe os histogramas
+        plt.title(f'Histograma de "{coluna}" por Classe de Qualidade')
+        plt.xlabel(coluna)
+        plt.ylabel('Frequência')
+        nome_arquivo = os.path.join(pasta_graficos, f'red_histogram_quality_{coluna}.png')
+        plt.savefig(nome_arquivo)
+        plt.close()
+
+    for coluna in variaveis_preditoras_white.columns:
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(data=white_database, x='quality', y=coluna)
+        plt.title(f'Distribuição de "{coluna}" por Classe de Qualidade')
+        plt.xlabel('Qualidade do Vinho')
+        plt.ylabel(coluna)
+        nome_arquivo = os.path.join(pasta_graficos, f'white_boxplot_quality_{coluna}.png')
+        plt.savefig(nome_arquivo)
+        plt.close()
+
+    for coluna in variaveis_preditoras_white.columns:
+        plt.figure(figsize=(12, 7))
+        sns.histplot(data=white_database, x=coluna, hue='quality', multiple="layer", kde=True, palette='viridis')    # 'multiple="layer"' sobrepõe os histogramas
+        plt.title(f'Histograma de "{coluna}" por Classe de Qualidade')
+        plt.xlabel(coluna)
+        plt.ylabel('Frequência')
+        nome_arquivo = os.path.join(pasta_graficos, f'white_histogram_quality_{coluna}.png')
+        plt.savefig(nome_arquivo)
+        plt.close()
