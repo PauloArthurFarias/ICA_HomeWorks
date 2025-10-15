@@ -71,59 +71,102 @@ if not os.path.exists(pasta_graficos):
         plt.savefig(nome_arquivo)
         plt.close()
 else:
-    print("A pasta já existe. Os gráficos não serão recriados.")
+    print(f"\nA pasta '{pasta_graficos}' já existe. Os gráficos não serão recriados.")
 
 #TASK 03
-# Agrupando por 'quality' e calculando a média, desvio padrão e assimetria para cada grupo
-media_condicional = red_database.groupby('quality').mean()
-desvio_condicional = red_database.groupby('quality').std()
-assimetria_condicional = red_database.groupby('quality').skew()
 
-estatisticas_condicionais = red_database.groupby('quality').agg(['mean', 'std', 'skew'])
-print("\n--- Tabela Completa de Estatísticas Condicionais ---")
-print(estatisticas_condicionais)
+media_condicional_red = red_database.groupby('quality').mean()
+desvio_condicional_red = red_database.groupby('quality').std()
+assimetria_condicional_red = red_database.groupby('quality').skew()
+
+media_condicional_white = white_database.groupby('quality').mean()
+desvio_condicional_white = white_database.groupby('quality').std()
+assimetria_condicional_white = white_database.groupby('quality').skew()
+
+pasta_estatisticas = 'estatisticas_task3'
+if not os.path.exists(pasta_estatisticas):
+    print("Criando pasta para salvar as tabelas de estatísticas.")
+    os.makedirs(pasta_estatisticas)
+
+    caminho_medias_red = os.path.join(pasta_estatisticas, 'tabela_medias_condicionais_red.csv')
+    caminho_desvios_red = os.path.join(pasta_estatisticas, 'tabela_desvios_condicionais_red.csv')
+    caminho_assimetrias_red = os.path.join(pasta_estatisticas, 'tabela_assimetrias_condicionais_red.csv')
+
+    media_condicional_red.to_csv(caminho_medias_red)
+    desvio_condicional_red.to_csv(caminho_desvios_red)
+    assimetria_condicional_red.to_csv(caminho_assimetrias_red)
+
+    caminho_medias_white = os.path.join(pasta_estatisticas, 'tabela_medias_condicionais_white.csv')
+    caminho_desvios_white = os.path.join(pasta_estatisticas, 'tabela_desvios_condicionais_white.csv')
+    caminho_assimetrias_white = os.path.join(pasta_estatisticas, 'tabela_assimetrias_condicionais_white.csv')
+
+    media_condicional_white.to_csv(caminho_medias_white)
+    desvio_condicional_white.to_csv(caminho_desvios_white)
+    assimetria_condicional_white.to_csv(caminho_assimetrias_white)
+else:
+    print(f"\nA pasta '{pasta_estatisticas}' já existe. Os gráficos não serão recriados.")
+
+estatisticas_condicionais_red = red_database.groupby('quality').agg(['mean', 'std', 'skew'])
+print("\n--- Tabela Completa de Estatísticas Condicionais Vinho Tinto ---")
+print(estatisticas_condicionais_red)
+
+estatisticas_condicionais_white = white_database.groupby('quality').agg(['mean', 'std', 'skew'])
+print("\n--- Tabela Completa de Estatísticas Condicionais Vinho Branco ---")
+print(estatisticas_condicionais_white)
 
 pasta_graficos = 'graficos_task3'
 if not os.path.exists(pasta_graficos):
     print("Criando pasta para salvar os gráficos.")
     os.makedirs(pasta_graficos)
 
-    for coluna in variaveis_preditoras_red.columns:
-        plt.figure(figsize=(12, 7))
-        sns.boxplot(data=red_database, x='quality', y=coluna)
-        plt.title(f'Distribuição de "{coluna}" por Classe de Qualidade')
-        plt.xlabel('Qualidade do Vinho')
-        plt.ylabel(coluna)
-        nome_arquivo = os.path.join(pasta_graficos, f'red_boxplot_quality_{coluna}.png')
-        plt.savefig(nome_arquivo)
-        plt.close()
+    classes_red = sorted(red_database['quality'].unique())
 
+    # Loop externo para as D variáveis preditoras
     for coluna in variaveis_preditoras_red.columns:
-        plt.figure(figsize=(12, 7))
-        sns.histplot(data=red_database, x=coluna, hue='quality', multiple="layer", kde=True, palette='viridis')    # 'multiple="layer"' sobrepõe os histogramas
-        plt.title(f'Histograma de "{coluna}" por Classe de Qualidade')
-        plt.xlabel(coluna)
-        plt.ylabel('Frequência')
-        nome_arquivo = os.path.join(pasta_graficos, f'red_histogram_quality_{coluna}.png')
-        plt.savefig(nome_arquivo)
-        plt.close()
+        # Loop interno para as L classes de qualidade
+        for classe in classes_red:
+            df_filtrado = red_database[red_database['quality'] == classe]
+            
+            plt.figure(figsize=(8, 5))
+            sns.histplot(data=df_filtrado, x=coluna, kde=True)
+            plt.title(f'Histograma de "{coluna}" para Qualidade {classe} (Tinto)')
+            plt.xlabel(coluna)
+            plt.ylabel('Frequência')
+            nome_arquivo_hist = os.path.join(pasta_graficos, f'red_hist_{coluna}_quality_{classe}.png')
+            plt.savefig(nome_arquivo_hist)
+            plt.close()
+
+            plt.figure(figsize=(6, 6))
+            sns.boxplot(data=df_filtrado, y=coluna)
+            plt.title(f'Box-plot de "{coluna}" para Qualidade {classe} (Tinto)')
+            plt.ylabel(coluna)
+            nome_arquivo_box = os.path.join(pasta_graficos, f'red_box_{coluna}_quality_{classe}.png')
+            plt.savefig(nome_arquivo_box)
+            plt.close()
+
+    classes_white = sorted(white_database['quality'].unique())
 
     for coluna in variaveis_preditoras_white.columns:
-        plt.figure(figsize=(12, 7))
-        sns.boxplot(data=white_database, x='quality', y=coluna)
-        plt.title(f'Distribuição de "{coluna}" por Classe de Qualidade')
-        plt.xlabel('Qualidade do Vinho')
-        plt.ylabel(coluna)
-        nome_arquivo = os.path.join(pasta_graficos, f'white_boxplot_quality_{coluna}.png')
-        plt.savefig(nome_arquivo)
-        plt.close()
+        for classe in classes_white:
+            df_filtrado = white_database[white_database['quality'] == classe]
 
-    for coluna in variaveis_preditoras_white.columns:
-        plt.figure(figsize=(12, 7))
-        sns.histplot(data=white_database, x=coluna, hue='quality', multiple="layer", kde=True, palette='viridis')    # 'multiple="layer"' sobrepõe os histogramas
-        plt.title(f'Histograma de "{coluna}" por Classe de Qualidade')
-        plt.xlabel(coluna)
-        plt.ylabel('Frequência')
-        nome_arquivo = os.path.join(pasta_graficos, f'white_histogram_quality_{coluna}.png')
-        plt.savefig(nome_arquivo)
-        plt.close()
+            plt.figure(figsize=(8, 5))
+            sns.histplot(data=df_filtrado, x=coluna, kde=True)
+            plt.title(f'Histograma de "{coluna}" para Qualidade {classe} (Branco)')
+            plt.xlabel(coluna)
+            plt.ylabel('Frequência')
+            nome_arquivo_hist = os.path.join(pasta_graficos, f'white_hist_{coluna}_quality_{classe}.png')
+            plt.savefig(nome_arquivo_hist)
+            plt.close()
+
+            plt.figure(figsize=(6, 6))
+            sns.boxplot(data=df_filtrado, y=coluna)
+            plt.title(f'Box-plot de "{coluna}" para Qualidade {classe} (Branco)')
+            plt.ylabel(coluna)
+            nome_arquivo_box = os.path.join(pasta_graficos, f'white_box_{coluna}_quality_{classe}.png')
+            plt.savefig(nome_arquivo_box)
+            plt.close()
+
+    print(f"\nProcesso finalizado. Todos os gráficos foram salvos no diretório '{pasta_graficos}'.")
+else:
+    print(f"\nA pasta '{pasta_graficos}' já existe. Os gráficos não serão recriados.")
