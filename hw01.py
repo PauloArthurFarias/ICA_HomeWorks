@@ -170,3 +170,45 @@ if not os.path.exists(pasta_graficos):
     print(f"\nProcesso finalizado. Todos os gráficos foram salvos no diretório '{pasta_graficos}'.")
 else:
     print(f"\nA pasta '{pasta_graficos}' já existe. Os gráficos não serão recriados.")
+
+#TASK 04
+
+pasta_graficos = 'graficos_task4'
+if not os.path.exists(pasta_graficos):
+    print(f"Criando pasta para salvar os gráficos")
+    os.makedirs(pasta_graficos)
+
+    print("Gerando Heatmap de correlação para os Vinhos")
+    matriz_correlacao_red = red_database.corr()
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(matriz_correlacao_red, annot=True, cmap='coolwarm', fmt='.2f')
+    plt.title('Matriz de Correlação para Vinho Tinto')
+    caminho_heatmap_red = os.path.join(pasta_graficos, 'red_correlation_heatmap.png')
+    plt.savefig(caminho_heatmap_red)
+    plt.close()
+
+    matriz_correlacao_white = white_database.corr()
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(matriz_correlacao_white, annot=True, cmap='coolwarm', fmt='.2f')
+    plt.title('Matriz de Correlação para Vinho Branco')
+    caminho_heatmap_white = os.path.join(pasta_graficos, 'white_correlation_heatmap.png')
+    plt.savefig(caminho_heatmap_white)
+    plt.close()
+
+
+
+
+    print("Gerando Pairplot para os Vinhos")
+    pairplot_red = sns.pairplot(red_database, hue='quality', palette='viridis')
+    caminho_pairplot_red = os.path.join(pasta_graficos, 'red_pairplot.png')
+    pairplot_red.savefig(caminho_pairplot_red)
+    plt.close()
+
+    pairplot_white = sns.pairplot(white_database, hue='quality', palette='viridis')
+    caminho_pairplot_white = os.path.join(pasta_graficos, 'white_pairplot.png')
+    pairplot_white.savefig(caminho_pairplot_white)
+    plt.close()
+
+    print(f"\nProcesso finalizado. Todos os resultados foram salvos no diretório '{pasta_graficos}'.")
+else:
+    print(f"\nA pasta '{pasta_graficos}' já existe. Os gráficos não serão recriados.")
