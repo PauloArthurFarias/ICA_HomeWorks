@@ -31,7 +31,7 @@ def executar_pca_manual(dataframe, nome_dataset, pasta_destino):
     df_pca = pd.DataFrame(data={'PC1': pc1, 'PC2': pc2, 'quality': y})
 
     plt.figure(figsize=(12, 8))
-    sns.scatterplot(data=df_pca, x='PC1', y='PC2', hue='quality', palette='viridis', alpha=0.7)
+    sns.scatterplot(data=df_pca, x='PC1', y='PC2', hue='quality', palette='tab10', alpha=0.7)
     plt.title(f'Análise de Componentes Principais (PCA) - {nome_dataset}')
     plt.xlabel('Componente Principal 1')
     plt.ylabel('Componente Principal 2')
@@ -236,12 +236,12 @@ if __name__ == "__main__":
         plt.close()
 
         print("Gerando Pairplot para os Vinhos")
-        pairplot_red = sns.pairplot(red_database, hue='quality', palette='viridis')
+        pairplot_red = sns.pairplot(red_database, hue='quality', palette='tab10')
         caminho_pairplot_red = os.path.join(pasta_graficos, 'red_pairplot.png')
         pairplot_red.savefig(caminho_pairplot_red)
         plt.close()
 
-        pairplot_white = sns.pairplot(white_database, hue='quality', palette='viridis')
+        pairplot_white = sns.pairplot(white_database, hue='quality', palette='tab10')
         caminho_pairplot_white = os.path.join(pasta_graficos, 'white_pairplot.png')
         pairplot_white.savefig(caminho_pairplot_white)
         plt.close()
