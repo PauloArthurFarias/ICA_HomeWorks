@@ -60,9 +60,13 @@ if __name__ == "__main__":
     print("--- Resumo Estatístico de vinhos brancos (inclui Média e Desvio Padrão) ---")
     print(estatisticas_descritivas_white)
 
-    assimetria = white_database.skew(numeric_only=True)
-    print("\n--- Assimetria (Skewness) de cada Variável ---")
-    print(assimetria)
+    assimetria_red = red_database.skew(numeric_only=True)
+    print("\n--- Assimetria (Skewness) de cada Variável  dos Vinhos Tintos---")
+    print(assimetria_red)
+
+    assimetria_white = white_database.skew(numeric_only=True)
+    print("\n--- Assimetria (Skewness) de cada Variável dos Vinhos Brancos---")
+    print(assimetria_white)
 
     # Seleciona apenas as colunas preditoras (exclui a coluna 'quality')
     variaveis_preditoras_red = red_database.drop('quality', axis=1)
