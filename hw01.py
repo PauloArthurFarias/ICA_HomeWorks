@@ -40,6 +40,31 @@ def executar_pca_manual(dataframe, nome_dataset, pasta_destino):
     nome_arquivo = os.path.join(pasta_destino, f'{nome_dataset}_pca_plot.png')
     plt.savefig(nome_arquivo)
     plt.close()
+
+    plt.figure(figsize=(12, 12))
+    nomes_variaveis = X.columns
+    for i, nome_var in enumerate(nomes_variaveis):
+        x_vetor = componente_principal_1[i] 
+        y_vetor = componente_principal_2[i] 
+        
+        plt.arrow(0, 0, x_vetor, y_vetor, color='r', alpha=0.8, head_width=0.02)
+        plt.text(x_vetor * 1.1, y_vetor * 1.1, nome_var, color='r', ha='center', va='center')
+
+    limite_max = np.max(np.abs(autovetores[:, indices_ordenados[:2]])) * 1.2
+    plt.xlim(-limite_max, limite_max)
+    plt.ylim(-limite_max, limite_max)
+    plt.axhline(0, color='grey', lw=1)
+    plt.axvline(0, color='grey', lw=1)
+    plt.title(f'Biplot (Vetores das Variáveis) - {nome_dataset}')
+    plt.xlabel('Componente Principal 1')
+    plt.ylabel('Componente Principal 2')
+    plt.grid(True)
+    
+    nome_arquivo_biplot = os.path.join(pasta_destino, f'{nome_dataset}_pca_biplot_vectors.png')
+    plt.savefig(nome_arquivo_biplot)
+    plt.close()
+    print(f"Biplot salvo em: '{nome_arquivo_biplot}'")
+
     
 
 # --- Execução Principal ---
